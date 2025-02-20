@@ -13,11 +13,12 @@ if ($conn->connect_error) {
 // Get age range from GET parameters
 $min_age = isset($_GET['min_age']) ? (int)$_GET['min_age'] : 0;
 $max_age = isset($_GET['max_age']) ? (int)$_GET['max_age'] : 100;
-$hospital_filter = isset($_GET['hospital_filter']) ? $_GET['hospital_filter'] : '';
+$hospital_filter = isset($_GET['hospital_filter']) ? $_GET['hospital_filter'] : ''; //เพิ่มใหม่
 
 // Create where clause for age range
 $where_clause = "WHERE report_patient_age BETWEEN $min_age AND $max_age";
 
+//เพิ่มใหม่
 if (!empty($hospital_filter) && $hospital_filter !== 'ทั้งหมด') {
     $where_clause .= " AND hospital_waypoint = '" . $conn->real_escape_string($hospital_filter) . "'";
 }
@@ -44,6 +45,7 @@ if ($result->num_rows > 0) {
     }
 }
 
+//เพิ่มใหม่
 if (isset($_GET['ajax'])) {
     header('Content-Type: application/json');
     echo json_encode([
@@ -54,6 +56,7 @@ if (isset($_GET['ajax'])) {
     exit;
 }
 
+//เพิ่มใหม่
 if (isset($_GET['get_hospitals'])) {
     $hospitalQuery = "SELECT DISTINCT hospital_waypoint FROM emergency_case WHERE hospital_waypoint IS NOT NULL AND hospital_waypoint != ''";
     $hospitalResult = $conn->query($hospitalQuery);
@@ -188,7 +191,8 @@ $conn->close();
                         <option value="อาการป่วย">อาการป่วย</option>
                         <option value="อื่นๆ">อื่นๆ</option>
                     </select>
-
+                    
+                    <!-- ลบจังหวัด -->
                     <label for="filter-hospital">โรงพยาบาล:</label>
                     <select id="filter-hospital-list" class="filter-select">
                         <option value="" selected hidden>กรุณาเลือกโรงพยาบาล</option>
@@ -381,7 +385,9 @@ $conn->close();
                 updateChart(dateStr);
             }
         });
+        
 
+        //********************* ตั้งแต่นี้เปลี่ยนใหม่ ******************************
         document.addEventListener("DOMContentLoaded", () => {
             const minAgeInput = document.getElementById('minAge');
             const maxAgeInput = document.getElementById('maxAge');
@@ -470,6 +476,7 @@ $conn->close();
             // ตรวจจับการเปลี่ยนค่าของฟิลเตอร์โรงพยาบาล
             hospitalSelect.addEventListener("change", updateChart);
         });
+        //**************************** ถึงตรงนี้เลย *********************************
     </script>
 </body>
 
